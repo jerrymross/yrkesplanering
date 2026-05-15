@@ -1,6 +1,7 @@
 import type { Prisma, PrismaClient } from "@prisma/client";
 import { calculateEducationPlan } from "./calculateEducationPlan";
 import { parseTeachingDays } from "./date-utils";
+import type { SegmentKind } from "./types";
 
 type Db = PrismaClient | Prisma.TransactionClient;
 
@@ -33,7 +34,7 @@ export async function recalculateEducationPlan(db: Db, educationId: string) {
       segments: course.segments.map((segment) => ({
         id: segment.id,
         name: segment.name,
-        type: segment.type,
+        type: segment.type as SegmentKind,
         order: segment.order,
         weeks: segment.weeks,
         requiredHours: segment.requiredHours,

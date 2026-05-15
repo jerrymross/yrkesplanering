@@ -2,6 +2,7 @@ import { notFound } from "next/navigation";
 import { AlertTriangle, CalendarDays, Lock } from "lucide-react";
 import { prisma } from "@/lib/prisma";
 import { calculateEducationPlan, parseTeachingDays } from "@/lib/scheduler";
+import type { SegmentKind } from "@/lib/scheduler";
 import { formatDate, statusLabel } from "@/lib/format";
 import { AddCourseForm, AddSegmentForm, DefaultSegmentButton } from "@/components/forms/course-forms";
 import { Badge } from "@/components/ui/badge";
@@ -83,7 +84,7 @@ export default async function EducationDetailPage({ params }: { params: Promise<
       segments: course.segments.map((segment) => ({
         id: segment.id,
         name: segment.name,
-        type: segment.type,
+        type: segment.type as SegmentKind,
         order: segment.order,
         weeks: segment.weeks,
         requiredHours: segment.requiredHours,

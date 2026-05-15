@@ -9,7 +9,6 @@ export default async function DashboardPage() {
   const educations = await prisma.education.findMany({
     include: {
       _count: { select: { courses: true } },
-      courses: { select: { id: true } },
     },
     orderBy: { createdAt: "desc" },
   });
