@@ -1,0 +1,137 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+enum EducationStatus {
+  draft
+  planned
+  active
+  completed
+}
+
+enum SegmentType {
+  teaching
+  apl
+  break
+  exam
+}
+
+enum LessonType {
+  teaching
+  apl
+  exam
+  theory
+  practical
+}
+
+model Education {
+  id              String            @id @default(cuid())
+  name            String
+  startDate       DateTime
+  teachingDays    String            @default("1,2,3,4,5")
+  startTime       String            @default("08:30")
+  endTime         String            @default("16:00")
+  hoursPerDay     Float             @default(7.5)
+  fikaStart       String            @default("10:00")
+  fikaEnd         String            @default("10:30")
+  lunchStart      String            @default("12:00")
+  lunchEnd        String            @default("13:00")
+  status          EducationStatus   @default(draft)
+  calculatedStart DateTime?
+  calculatedEnd   DateTime?
+  createdAt       DateTime          @default(now())
+  updatedAt       DateTime          @updatedAt
+  courses         EducationCourse[]
+  lessons         Lesson[]
+}
+
+model EducationCourse {
+  id              String          @id @default(cuid())
+  educationId     String
+  name            String
+  level           String?
+  points          Int
+  totalWeeks      Int
+  order           Int
+  locked          Boolean         @default(false)
+  calculatedStart DateTime?
+  calculatedEnd   DateTime?
+  calculatedDays  Int?
+  calculatedHours Float?
+  createdAt       DateTime        @default(now())
+  updatedAt       DateTime        @updatedAt
+  education       Education       @relation(fields: [educationId], references: [id], onDelete: Cascade)
+  segments        CourseSegment[]
+  lessons         Lesson[]
+
+  @@index([educationId, order])
+}
+
+model CourseSegment {
+  id              String          @id @default(cuid())
+  courseId        String
+  name            String
+  type            SegmentType
+  order           Int
+  weeks           Int
+  requiredHours   Float?
+  calculatedStart DateTime?
+  calculatedEnd   DateTime?
+  calculatedDays  Int?
+  calculatedHours Float?
+  createdAt       DateTime        @default(now())
+  updatedAt       DateTime        @updatedAt
+  course          EducationCourse @relation(fields: [courseId], references: [id], onDelete: Cascade)
+  lessons         Lesson[]
+
+  @@index([courseId, order])
+}
+
+model Lesson {
+  id          String          @id @default(cuid())
+  educationId String
+  courseId    String
+  segmentId   String?
+  title       String
+  type        LessonType
+  order       Int
+  date        DateTime
+  startTime   String
+  endTime     String
+  teacherId   String?
+  roomId      String?
+  locked      Boolean         @default(false)
+  createdAt   DateTime        @default(now())
+  updatedAt   DateTime        @updatedAt
+  education   Education       @relation(fields: [educationId], references: [id], onDelete: Cascade)
+  course      EducationCourse @relation(fields: [courseId], references: [id], onDelete: Cascade)
+  segment     CourseSegment?  @relation(fields: [segmentId], references: [id], onDelete: SetNull)
+  teacher     Teacher?        @relation(fields: [teacherId], references: [id], onDelete: SetNull)
+  room        Room?           @relation(fields: [roomId], references: [id], onDelete: SetNull)
+
+  @@index([educationId, date])
+  @@index([courseId, order])
+  @@index([segmentId, order])
+}
+
+model Teacher {
+  id        String   @id @default(cuid())
+  name      String
+  email     String?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  lessons   Lesson[]
+}
+
+model Room {
+  id        String   @id @default(cuid())
+  name      String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  lessons   Lesson[]
+}
