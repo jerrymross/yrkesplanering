@@ -34,7 +34,8 @@ cp .env.example .env
 Sätt `DATABASE_URL` till din Supabase/PostgreSQL-anslutning:
 
 ```env
-DATABASE_URL="postgresql://postgres:[PASSWORD]@[HOST]:5432/postgres?schema=public"
+DATABASE_URL="postgresql://postgres.knekyofheizswjbjhfsf:[YOUR-PASSWORD]@aws-0-eu-west-3.pooler.supabase.com:6543/postgres?pgbouncer=true"
+DIRECT_URL="postgresql://postgres.knekyofheizswjbjhfsf:[YOUR-PASSWORD]@aws-0-eu-west-3.pooler.supabase.com:5432/postgres"
 NEXT_PUBLIC_SUPABASE_URL="https://knekyofheizswjbjhfsf.supabase.co"
 NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY="sb_publishable_..."
 ```
@@ -64,10 +65,11 @@ npm run dev
 
 1. Skapa ett projekt i Supabase.
 2. Kopiera en PostgreSQL connection string.
-3. Lägg värdet i `.env` lokalt och i Vercel som `DATABASE_URL`.
-4. Lägg även `NEXT_PUBLIC_SUPABASE_URL` och `NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY` i Vercel.
-5. Kör `npm run db:deploy` för att skapa tabeller.
-6. Kör `npm run db:seed` om du vill ha exempelutbildningen.
+3. Lägg pooler-värdet i `.env` lokalt och i Vercel som `DATABASE_URL`.
+4. Lägg direct-värdet i `.env` lokalt och i Vercel som `DIRECT_URL`.
+5. Lägg även `NEXT_PUBLIC_SUPABASE_URL` och `NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY` i Vercel.
+6. Kör `npm run db:deploy` för att skapa tabeller.
+7. Kör `npm run db:seed` om du vill ha exempelutbildningen.
 
 För lokal utveckling kan du använda Supabase direkt. Om du vill utveckla helt offline kan du köra en lokal PostgreSQL-container och använda samma Prisma-schema.
 
@@ -83,7 +85,7 @@ Build-scriptet kör `prisma generate` före `next build`.
 
 1. Pusha projektet till GitHub.
 2. Importera repot i Vercel.
-3. Lägg till miljövariablerna `DATABASE_URL`, `NEXT_PUBLIC_SUPABASE_URL` och `NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY`.
+3. Lägg till miljövariablerna `DATABASE_URL`, `DIRECT_URL`, `NEXT_PUBLIC_SUPABASE_URL` och `NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY`.
 4. Deploya.
 5. Kör `npm run db:deploy` mot samma databas en gång när schema ändras.
 
