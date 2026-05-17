@@ -2,7 +2,7 @@
 
 Yrkesplan är en första MVP för att planera yrkesutbildningar, kurser, nivåer, APL-perioder och lektioner.
 
-Byggt för Next.js App Router, TypeScript, Tailwind CSS, shadcn/ui-inspirerade komponenter, Prisma och SQLite i utveckling. Prisma-modellen är hållen enkel så `datasource` senare kan bytas från SQLite till PostgreSQL, exempelvis Supabase.
+Byggt för Next.js App Router, TypeScript, Tailwind CSS, shadcn/ui-inspirerade komponenter, Prisma och PostgreSQL/Supabase.
 
 ## Funktioner i MVP
 
@@ -23,11 +23,18 @@ Krav:
 
 - Node.js 20 eller senare
 - npm
+- En PostgreSQL-databas, till exempel Supabase
 
 Skapa `.env`:
 
 ```bash
 cp .env.example .env
+```
+
+Sätt `DATABASE_URL` till din Supabase/PostgreSQL-anslutning:
+
+```env
+DATABASE_URL="postgresql://postgres:[PASSWORD]@[HOST]:5432/postgres?schema=public"
 ```
 
 Installera beroenden:
@@ -36,10 +43,10 @@ Installera beroenden:
 npm install
 ```
 
-Skapa databasen och kör seed:
+Skapa tabeller och kör seed:
 
 ```bash
-npm run db:push
+npm run db:deploy
 npm run db:seed
 ```
 
@@ -51,6 +58,16 @@ npm run dev
 
 Öppna `http://localhost:3000`.
 
+## Supabase
+
+1. Skapa ett projekt i Supabase.
+2. Kopiera en PostgreSQL connection string.
+3. Lägg värdet i `.env` lokalt och i Vercel som `DATABASE_URL`.
+4. Kör `npm run db:deploy` för att skapa tabeller.
+5. Kör `npm run db:seed` om du vill ha exempelutbildningen.
+
+För lokal utveckling kan du använda Supabase direkt. Om du vill utveckla helt offline kan du köra en lokal PostgreSQL-container och använda samma Prisma-schema.
+
 ## Build
 
 ```bash
@@ -59,29 +76,15 @@ npm run build
 
 Build-scriptet kör `prisma generate` före `next build`.
 
-## Databas
-
-Utveckling använder SQLite:
-
-```env
-DATABASE_URL="file:./dev.db"
-```
-
-För PostgreSQL/Supabase senare:
-
-1. Byt `provider` i `prisma/schema.prisma` från `sqlite` till `postgresql`.
-2. Sätt `DATABASE_URL` till Supabase/PostgreSQL-anslutningen.
-3. Kör Prisma-migreringar i stället för `db push`.
-
 ## Vercel och GitHub
 
-1. Skapa ett GitHub-repo och pusha projektet.
-2. Logga in på Vercel och välj `Add New Project`.
-3. Importera GitHub-repot.
-4. Lägg till miljövariabeln `DATABASE_URL`.
-5. Deploya från Vercel.
+1. Pusha projektet till GitHub.
+2. Importera repot i Vercel.
+3. Lägg till miljövariabeln `DATABASE_URL`.
+4. Deploya.
+5. Kör `npm run db:deploy` mot samma databas en gång när schema ändras.
 
-För produktion bör SQLite ersättas med PostgreSQL, eftersom Vercels filsystem inte är en permanent databas.
+Seed körs inte automatiskt av Vercel. Kör `npm run db:seed` manuellt mot produktionsdatabasen om du vill ha exempeldata där.
 
 ## Antaganden
 
@@ -94,6 +97,7 @@ För produktion bör SQLite ersättas med PostgreSQL, eftersom Vercels filsystem
 ## Viktiga filer
 
 - `prisma/schema.prisma` - datamodell
+- `prisma/migrations/20260517120000_init/migration.sql` - initial PostgreSQL-migration
 - `prisma/seed.ts` - exempelutbildning och lektioner
 - `lib/scheduler/calculateEducationPlan.ts` - planeringsmotor
 - `app/dashboard/page.tsx` - dashboard
