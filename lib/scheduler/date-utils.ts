@@ -13,7 +13,7 @@ export function isWeekend(date: Date) {
   return day === 0 || day === 6;
 }
 
-export function isHoliday(_date: Date) {
+export function isHoliday() {
   // Prepared for a Swedish holiday calendar in a later version.
   return false;
 }
