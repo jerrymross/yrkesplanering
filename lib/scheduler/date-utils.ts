@@ -13,8 +13,9 @@ export function isWeekend(date: Date) {
   return day === 0 || day === 6;
 }
 
-export function isHoliday() {
+export function isHoliday(_date: Date) {
   // Prepared for a Swedish holiday calendar in a later version.
+  void _date;
   return false;
 }
 
